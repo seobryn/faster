@@ -1,0 +1,45 @@
+{
+  "name": "faster",
+  "version": "1.0.0",
+  "description": "Super fast Web framework for Node.js",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "dev": "nodemon ./examples/server.mjs"
+  },
+  "keywords": [
+    "faster",
+    "web",
+    "app",
+    "http",
+    "application",
+    "server",
+    "framework",
+    "middleware"
+  ],
+  "author": "Seobryn <ing.jose.joya@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "29.5.12",
+    "jest": "29.7.0",
+    "nodemon": "3.1.4",
+    "standard": "17.1.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "standard"
+    ],
+    "env": {
+      "jest": true,
+      "node": true
+    },
+    "ignorePatterns": [
+      "dist/**",
+      "node_modules/**",
+      "config.mjs",
+      "src/Errors/codes.mjs"
+    ]
+  }
+}
