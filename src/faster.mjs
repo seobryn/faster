@@ -55,7 +55,7 @@ export class Faster {
   options
 
   /**
-   * @type {Map<string, { path:string, fnCallback: (req: FasterRequest ,res: FasterResponse)=> any }[]>}
+   * @type {Map<string, { path:string, fnCallbacks: FnCallback[] }[]>}
    * @api private
    */
   requestMap = new Map()
@@ -82,13 +82,15 @@ export class Faster {
     try {
       const requests = this.requestMap.get(method)
 
-      for (const { path, fnCallback } of requests) {
+      for (const { path, fnCallbacks } of requests) {
         if (pathIsEqual(url, path)) {
           const { params, searchParams } = getParamsFromUrl(url, path)
           req.params = params
           req.searchParams = new URLSearchParams(searchParams)
 
-          await fnCallback(req, res)
+          for (const fnCallback of fnCallbacks) {
+            await fnCallback(req, res)
+          }
 
           if (res.headersSent) {
             res.responseTime = Date.now() - initTime
@@ -160,124 +162,126 @@ export class Faster {
    *
    * @param {string} method - HTTP Method
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle requests
    * @return {void}
    * @api private
    */
-  #handleReqMethod (method, path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
+  #handleReqMethod (method, path, ...fnCallbacks) {
+    for (const fnCallback of fnCallbacks) {
+      if (!isFunctionAsync(fnCallback)) {
+        throw new Error('fnCallback must be an async function')
+      }
     }
     if (this.requestMap.has(method)) {
       const functionList = this.requestMap.get(method)
       if (functionList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
         console.warn(`⚠️  \x1b[31mDuplicated ${method} path: '${path}'\x1b[0m`)
       }
-      functionList.push({ path, fnCallback })
+      functionList.push({ path, fnCallback: fnCallbacks })
     } else {
       this.requestMap.set(method, [{
         path,
-        fnCallback
+        fnCallback: fnCallbacks
       }])
     }
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle get requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle get requests
    * @returns {Faster}
    * @api public
    */
-  get (path, fnCallback) {
-    this.#handleReqMethod('GET', path, fnCallback)
+  get (path, ...fnCallbacks) {
+    this.#handleReqMethod('GET', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle post requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle post requests
    * @return {Faster}
    * @api public
    */
-  post (path, fnCallback) {
-    this.#handleReqMethod('POST', path, fnCallback)
+  post (path, ...fnCallbacks) {
+    this.#handleReqMethod('POST', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle put requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle put requests
    * @returns {Faster}
    * @api public
    */
-  put (path, fnCallback) {
-    this.#handleReqMethod('PUT', path, fnCallback)
+  put (path, ...fnCallbacks) {
+    this.#handleReqMethod('PUT', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle delete requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle delete requests
    * @returns {Faster}
    * @api public
    */
-  del (path, fnCallback) {
-    this.#handleReqMethod('DELETE', path, fnCallback)
+  del (path, ...fnCallbacks) {
+    this.#handleReqMethod('DELETE', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle patch requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle patch requests
    * @returns {Faster}
    * @api public
    */
-  patch (path, fnCallback) {
-    this.#handleReqMethod('PATCH', path, fnCallback)
+  patch (path, ...fnCallbacks) {
+    this.#handleReqMethod('PATCH', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle options requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle options requests
    * @returns {Faster}
    * @api public
    */
-  opts (path, fnCallback) {
-    this.#handleReqMethod('OPTIONS', path, fnCallback)
+  opts (path, ...fnCallbacks) {
+    this.#handleReqMethod('OPTIONS', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle head requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle head requests
    * @returns {Faster}
    * @api public
    */
-  head (path, fnCallback) {
-    this.#handleReqMethod('HEAD', path, fnCallback)
+  head (path, ...fnCallbacks) {
+    this.#handleReqMethod('HEAD', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle connect requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle connect requests
    * @returns {Faster}
    * @api public
    */
-  connect (path, fnCallback) {
-    this.#handleReqMethod('CONNECT', path, fnCallback)
+  connect (path, ...fnCallbacks) {
+    this.#handleReqMethod('CONNECT', path, fnCallbacks)
     return this
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback} fnCallback - Function to handle trace requests
+   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle trace requests
    * @return {Faster}
    * @api public
    */
-  trace (path, fnCallback) {
-    this.#handleReqMethod('TRACE', path, fnCallback)
+  trace (path, ...fnCallbacks) {
+    this.#handleReqMethod('TRACE', path, fnCallbacks)
     return this
   }
 }
