@@ -9,5 +9,5 @@
 - [x] Optional SSL connection.
 - [x] Optional body Parser.
 - [x] Error handling.
-- [] Middleware implementation.
-- [] Routing implementation.
+- [ ] Middleware implementation.
+- [ ] Routing implementation.
