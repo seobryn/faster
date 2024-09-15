@@ -37,9 +37,9 @@ export class Faster {
     this.options.secure = this.options.secure || false
 
     if (this.options.secure) {
-      this.server = https.createServer(this.options.ssl, this.handleRequest.bind(this))
+      this.#server = https.createServer(this.options.ssl, this.#handleRequest.bind(this))
     } else {
-      this.server = http.createServer(this.handleRequest.bind(this))
+      this.#server = http.createServer(this.#handleRequest.bind(this))
     }
   }
 
@@ -47,7 +47,7 @@ export class Faster {
    * @type {http.Server | https.Server}
    * @api private
    */
-  server
+  #server
 
   /**
    * @api private
@@ -58,7 +58,7 @@ export class Faster {
    * @type {Map<string, { path:string, fnCallbacks: FnCallback[] }[]>}
    * @api private
    */
-  requestMap = new Map()
+  #requestMap = new Map()
 
   /**
    *
@@ -66,7 +66,7 @@ export class Faster {
    * @param {FasterResponse} res
    * @api private
    */
-  async handleRequest (req, res) {
+  async #handleRequest (req, res) {
     const initTime = Date.now()
     const { method, url } = req
 
@@ -82,7 +82,7 @@ export class Faster {
     res.setHeader('X-Powered-By', 'Faster Web Framework')
 
     try {
-      const requests = this.requestMap.get(method)
+      const requests = this.#requestMap.get(method)
 
       for (const { path, fnCallbacks } of requests) {
         if (pathIsEqual(url, path)) {
@@ -106,7 +106,7 @@ export class Faster {
     } catch (err) {
       if (err instanceof HttpError) {
         if (this.options.log.errorAsJson) {
-          res.status(err.code).json({ error: err.message })
+          res.status(err.code).json({ error: err.message, details: err.details })
         } else {
           res.status(err.code).send(err.message)
         }
@@ -127,7 +127,7 @@ export class Faster {
   async listen (port) {
     return new Promise((resolve, reject) => {
       try {
-        this.server.listen(port, this.options.host, () => {
+        this.#server.listen(port, this.options.host, () => {
           console.log('Faster web server started\nURL: \x1b[35m%s\x1b[0m', `${this.options.secure ? 'https' : 'http'}://${this.options.host}:${port}`)
           console.log('\x1b[36mPress [CTRL+C] to stop server\x1b[0m')
           resolve()
@@ -147,7 +147,7 @@ export class Faster {
    */
   async close () {
     return new Promise((resolve, reject) => {
-      this.server.close((error) => {
+      this.#server.close((error) => {
         if (error) {
           console.log('Error closing server')
           reject(error)
@@ -174,14 +174,14 @@ export class Faster {
         throw new Error('fnCallback must be an async function')
       }
     }
-    if (this.requestMap.has(method)) {
-      const functionList = this.requestMap.get(method)
+    if (this.#requestMap.has(method)) {
+      const functionList = this.#requestMap.get(method)
       if (functionList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
         console.warn(`⚠️  \x1b[31mDuplicated ${method} path: '${path}'\x1b[0m`)
       }
       functionList.push({ path, fnCallbacks })
     } else {
-      this.requestMap.set(method, [{
+      this.#requestMap.set(method, [{
         path,
         fnCallbacks
       }])

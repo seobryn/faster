@@ -7,7 +7,7 @@ app
     if (req.headers.test === 'Seobryn') {
       req.user = { name: 'Seobryn' }
     } else {
-      throw new HttpError(401, 'Unauthorized')
+      throw new HttpError(401, 'Unauthorized', { validation: 'Missing test header' })
     }
   }, async (req, res) => {
     return res.send('Hello World!')
