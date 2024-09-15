@@ -1,5 +1,5 @@
 {
-  "name": "faster",
+  "name": "@seobryn/faster",
   "version": "1.0.0",
   "description": "Super fast Web framework for Node.js to create api and microservices",
   "main": "index.mjs",
