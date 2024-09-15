@@ -1,7 +1,7 @@
 {
   "name": "faster",
   "version": "1.0.0",
-  "description": "Super fast Web framework for Node.js",
+  "description": "Super fast Web framework for Node.js to create api and microservices",
   "main": "index.mjs",
   "type": "module",
   "scripts": {
@@ -18,8 +18,29 @@
     "framework",
     "middleware"
   ],
-  "author": "Seobryn <ing.jose.joya@gmail.com>",
+  "files": [
+    "package.json",
+    "index.mjs",
+    "src",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">= v18.19.0"
+  },
+  "author": {
+    "name": "Jose Joya",
+    "email": "ing.jose.joya@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:seobryn/faster.git"
+  },
+  "readmeFilename": "README.md",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seobryn/faster/issues"
+  },
+  "homepage": "https://github.com/seobryn/faster",
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "29.5.12",

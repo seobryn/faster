@@ -1,6 +1,6 @@
 ## Faster Web Framework
 
-This frameworks was inspired on different web frameworks like `express`, `koa`, `restify` and is made to make things as simple as possible and as Faster as possible.
+This is a zero dependency framework that was inspired on different web frameworks like `express`, `koa`, `restify` and is made to make things as simple as possible and as Faster as possible.
 
 ### Installation
 
