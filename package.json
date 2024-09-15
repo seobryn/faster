@@ -1,6 +1,6 @@
 {
   "name": "@seobryn/faster",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Super fast Web framework for Node.js to create api and microservices",
   "main": "index.mjs",
   "type": "module",

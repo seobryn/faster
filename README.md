@@ -7,13 +7,13 @@ This is a zero dependency framework that was inspired on different web framework
 Faster requires **node.js v.18.19.0** or higher.
 
 ```bash
-$ npm i faster
+$ npm i @seobryn/faster
 ```
 
 ### Hello World Faster
 
 ```js
-import { Faster } from 'faster'
+import { Faster } from '@seobryn/faster'
 
 const app = new Faster()
 
