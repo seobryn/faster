@@ -4,9 +4,10 @@
 
 
 ### Road map
-- [x] Basic Server creation
-- [x] HTTP Verbs Implemented
-- [x] Optional SSL connection
-- [x] Optional body Parser
-- [] Optional request cache
+- [x] Basic Server creation.
+- [x] HTTP Verbs Implemented.
+- [x] Optional SSL connection.
+- [x] Optional body Parser.
+- [x] Error handling.
 - [] Middleware implementation.
+- [] Routing implementation.
