@@ -156,27 +156,40 @@ export class Faster {
   }
 
   /**
+   * Register a new route to the server
+   *
+   * @param {string} method - HTTP Method
+   * @param {string} path - URL path
+   * @param {FnCallback} fnCallback - Function to handle requests
+   * @return {void}
+   * @api private
+   */
+  #handleReqMethod (method, path, fnCallback) {
+    if (!isFunctionAsync(fnCallback)) {
+      throw new Error('fnCallback must be an async function')
+    }
+    if (this.requestMap.has(method)) {
+      const functionList = this.requestMap.get(method)
+      if (functionList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
+        console.warn(`⚠️  \x1b[31mDuplicated ${method} path: '${path}'\x1b[0m`)
+      }
+      functionList.push({ path, fnCallback })
+    } else {
+      this.requestMap.set(method, [{
+        path,
+        fnCallback
+      }])
+    }
+  }
+
+  /**
    * @param {string} path - URL path
    * @param {FnCallback} fnCallback - Function to handle get requests
    * @returns {Faster}
    * @api public
    */
   get (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('GET')) {
-      const functionList = this.requestMap.get('GET')
-      if (functionList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  \x1b[31mDuplicated GET path: '${path}'\x1b[0m`)
-      }
-      functionList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('GET', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('GET', path, fnCallback)
     return this
   }
 
@@ -187,21 +200,7 @@ export class Faster {
    * @api public
    */
   post (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('POST')) {
-      const postList = this.requestMap.get('POST')
-      if (postList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated POST path: '${path}'`)
-      }
-      postList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('POST', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('POST', path, fnCallback)
     return this
   }
 
@@ -212,21 +211,7 @@ export class Faster {
    * @api public
    */
   put (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('PUT')) {
-      const putList = this.requestMap.get('PUT')
-      if (putList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated PUT path: '${path}'`)
-      }
-      putList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('PUT', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('PUT', path, fnCallback)
     return this
   }
 
@@ -237,21 +222,7 @@ export class Faster {
    * @api public
    */
   del (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('DELETE')) {
-      const deleteList = this.requestMap.get('DELETE')
-      if (deleteList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated DELETE path: '${path}'`)
-      }
-      deleteList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('DELETE', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('DELETE', path, fnCallback)
     return this
   }
 
@@ -262,21 +233,7 @@ export class Faster {
    * @api public
    */
   patch (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('PATCH')) {
-      const patchList = this.requestMap.get('PATCH')
-      if (patchList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated PATCH path: '${path}'`)
-      }
-      patchList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('PATCH', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('PATCH', path, fnCallback)
     return this
   }
 
@@ -287,21 +244,7 @@ export class Faster {
    * @api public
    */
   opts (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('OPTIONS')) {
-      const optionsList = this.requestMap.get('OPTIONS')
-      if (optionsList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated OPTIONS path: '${path}'`)
-      }
-      optionsList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('OPTIONS', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('OPTIONS', path, fnCallback)
     return this
   }
 
@@ -312,21 +255,7 @@ export class Faster {
    * @api public
    */
   head (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('HEAD')) {
-      const headList = this.requestMap.get('HEAD')
-      if (headList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated HEAD path: '${path}'`)
-      }
-      headList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('HEAD', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('HEAD', path, fnCallback)
     return this
   }
 
@@ -337,21 +266,7 @@ export class Faster {
    * @api public
    */
   connect (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('CONNECT')) {
-      const connectList = this.requestMap.get('CONNECT')
-      if (connectList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated CONNECT path: '${path}'`)
-      }
-      connectList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('CONNECT', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('CONNECT', path, fnCallback)
     return this
   }
 
@@ -362,21 +277,7 @@ export class Faster {
    * @api public
    */
   trace (path, fnCallback) {
-    if (!isFunctionAsync(fnCallback)) {
-      throw new Error('fnCallback must be an async function')
-    }
-    if (this.requestMap.has('TRACE')) {
-      const traceList = this.requestMap.get('TRACE')
-      if (traceList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
-        console.warn(`⚠️  Duplicated TRACE path: '${path}'`)
-      }
-      traceList.push({ path, fnCallback })
-    } else {
-      this.requestMap.set('TRACE', [{
-        path,
-        fnCallback
-      }])
-    }
+    this.#handleReqMethod('TRACE', path, fnCallback)
     return this
   }
 }
