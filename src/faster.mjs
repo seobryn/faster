@@ -74,9 +74,11 @@ export class Faster {
     addJsonFeature(res)
     addSendFeature(res)
     addStatusFeature(res)
+
     if (this.options.parseBody) {
       await addParseBodyFeature(req)
     }
+
     res.setHeader('X-Powered-By', 'Faster Web Framework')
 
     try {
@@ -166,7 +168,7 @@ export class Faster {
    * @return {void}
    * @api private
    */
-  #handleReqMethod (method, path, ...fnCallbacks) {
+  #handleReqMethod (method, path, fnCallbacks) {
     for (const fnCallback of fnCallbacks) {
       if (!isFunctionAsync(fnCallback)) {
         throw new Error('fnCallback must be an async function')
@@ -177,18 +179,18 @@ export class Faster {
       if (functionList.findIndex((val) => requestMatcher(val.path, path)) > -1) {
         console.warn(`⚠️  \x1b[31mDuplicated ${method} path: '${path}'\x1b[0m`)
       }
-      functionList.push({ path, fnCallback: fnCallbacks })
+      functionList.push({ path, fnCallbacks })
     } else {
       this.requestMap.set(method, [{
         path,
-        fnCallback: fnCallbacks
+        fnCallbacks
       }])
     }
   }
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle get requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle get requests
    * @returns {Faster}
    * @api public
    */
@@ -199,7 +201,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle post requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle post requests
    * @return {Faster}
    * @api public
    */
@@ -210,7 +212,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle put requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle put requests
    * @returns {Faster}
    * @api public
    */
@@ -221,7 +223,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle delete requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle delete requests
    * @returns {Faster}
    * @api public
    */
@@ -232,7 +234,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle patch requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle patch requests
    * @returns {Faster}
    * @api public
    */
@@ -243,7 +245,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle options requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle options requests
    * @returns {Faster}
    * @api public
    */
@@ -254,7 +256,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle head requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle head requests
    * @returns {Faster}
    * @api public
    */
@@ -265,7 +267,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle connect requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle connect requests
    * @returns {Faster}
    * @api public
    */
@@ -276,7 +278,7 @@ export class Faster {
 
   /**
    * @param {string} path - URL path
-   * @param {FnCallback[]} fnCallbacks - Function middleware array to handle trace requests
+   * @param {...FnCallback} fnCallbacks - Function middleware array to handle trace requests
    * @return {Faster}
    * @api public
    */

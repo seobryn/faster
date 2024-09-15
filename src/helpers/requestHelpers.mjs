@@ -29,23 +29,26 @@ export function requestMatcher (requestPath1, requestPath2) {
  * @return {Promise<void>}
  */
 export async function addParseBodyFeature (req) {
-  return new Promise((resolve, reject) => {
-    const { method } = req
-    let body = ''
-    if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
-      req.on('data',
-        /** @param {Buffer} chunk */
-        (chunk) => {
-          body += chunk
-        })
+  const { method } = req
 
-      req.on('end', () => {
-        req.body = parseBody(body, req.headers['content-type'])
-        resolve()
+  if (method !== 'POST' && method !== 'PUT' && method === 'PATCH') {
+    return
+  }
+
+  return new Promise((resolve, reject) => {
+    let body = ''
+    req.on('data',
+      /** @param {Buffer} chunk */
+      (chunk) => {
+        body += chunk
       })
 
-      req.on('error', reject)
-    }
+    req.on('end', () => {
+      req.body = parseBody(body, req.headers['content-type'])
+      resolve()
+    })
+
+    req.on('error', reject)
   })
 }
 
