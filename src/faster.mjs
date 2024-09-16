@@ -1,6 +1,6 @@
 import http from 'http'
 import https from 'https'
-import { getParamsFromUrl, isFunctionAsync, pathIsEqual } from './utils.mjs'
+import { getParamsFromUrl, isFunctionAsync, pathIsEqual } from './utils/general-utils.mjs'
 import { addJsonFeature, addSendFeature, addStatusFeature } from './helpers/responseHelpers.mjs'
 import { logRequest } from './helpers/logHelpers.mjs'
 import { addParseBodyFeature, requestMatcher } from './helpers/requestHelpers.mjs'

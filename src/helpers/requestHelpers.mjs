@@ -13,7 +13,7 @@ export function requestMatcher (requestPath1, requestPath2) {
   }
 
   for (let idx = 0; idx < reqPathParts1.length; idx += 1) {
-    if (reqPathParts1[idx].startsWith(':') && reqPathParts2[idx].startsWith(':')) {
+    if (reqPathParts1[idx].startsWith(':') && reqPathParts2[idx].startsWith(':') && reqPathParts1[idx] === '*' && reqPathParts2[idx] === '*') {
       continue
     } else if (reqPathParts1[idx] !== reqPathParts2[idx]) {
       return false
