@@ -26,6 +26,7 @@ export class Faster {
      * @param {Buffer} [options.ssl.cert] - SSL certificate
      * @param {object} [options.log] - Log options
      * @param {boolean} [options.log.errorAsJson] - Log errors as json
+     * @param {number} [options.timeout] - Request timeout in ms, Default 5000ms
      */
   constructor (options = {}) {
     /**
@@ -35,6 +36,7 @@ export class Faster {
     this.options.host = this.options.host || '0.0.0.0'
     this.options.log = this.options.log || { errorAsJson: false }
     this.options.secure = this.options.secure || false
+    this.options.timeout = this.options.timeout || 5000
 
     if (this.options.secure) {
       this.#server = https.createServer(this.options.ssl, this.#handleRequest.bind(this))
@@ -83,6 +85,7 @@ export class Faster {
 
     try {
       const requests = this.#requestMap.get(method)
+      let timeoutRef = null
 
       for (const { path, fnCallbacks } of requests) {
         if (pathIsEqual(url, path)) {
@@ -97,12 +100,15 @@ export class Faster {
           if (res.headersSent) {
             res.responseTime = Date.now() - initTime
             logRequest(req, res)
+            clearTimeout(timeoutRef)
             return
           }
         }
       }
 
-      throw new HttpError(404, 'Route Not Found')
+      timeoutRef = setTimeout(() => {
+        res.status(408).send('Request Timeout')
+      }, this.options.timeout)
     } catch (err) {
       if (err instanceof HttpError) {
         if (this.options.log.errorAsJson) {

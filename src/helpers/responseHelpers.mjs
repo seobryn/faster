@@ -23,9 +23,11 @@ export function addJsonFeature (res) {
  * @returns {void}
  */
 export function addSendFeature (res) {
-  res.send = (data) => {
-    res.setHeader('Content-Type', 'text/plain')
-    res.end(data)
+  res.send = (data, headers = {}) => {
+    Object.keys(headers).forEach(header => {
+      res.setHeader(header, headers[header])
+    })
+    return res.end(data)
   }
 }
 

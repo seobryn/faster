@@ -12,17 +12,21 @@ app
       throw new HttpError(401, 'Unauthorized', { validation: 'Missing test header' })
     }
   }, async (req, res) => {
-    return res.send('Hello World!')
+    return res.send('Hello World!', {
+      'Content-Type': 'text/plain'
+    })
   })
   .post('/test', async (req, res) => {
     return res.json(req.body)
   })
   .get('/product/*', serveStatic({ directory: __dirname(import.meta.url) + '/static', maxAge: 2000 }))
   .get('/test-multiple/*', async (req, res) => {
-    return true
+
   })
   .get('/test-multiple/', async (req, res) => {
-    res.send('Yess otra vezzz')
+    res.send('Yess otra vezzz', {
+      'Content-Type': 'text/plain'
+    })
   })
 
 app.listen(3000).then(() => {
