@@ -95,10 +95,10 @@ export function serveStatic (options) {
     let file
     const dirBasename = path.basename(options.directory)
     const reqPathBasename = path.basename(req.url)
+    console.log(reqPathBasename, dirBasename)
 
     if (path.extname(req.url) === '' && reqPathBasename === dirBasename) {
       console.log('Serving Directory')
-
       file = options.directory
     } else {
       console.log('Serving a file')

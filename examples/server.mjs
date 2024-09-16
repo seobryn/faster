@@ -18,6 +18,12 @@ app
     return res.json(req.body)
   })
   .get('/product/*', serveStatic({ directory: __dirname(import.meta.url) + '/static', maxAge: 2000 }))
+  .get('/test-multiple/*', async (req, res) => {
+    return true
+  })
+  .get('/test-multiple/', async (req, res) => {
+    res.send('Yess otra vezzz')
+  })
 
 app.listen(3000).then(() => {
   console.log('Server listening on port 3000\n')

@@ -97,8 +97,8 @@ export class Faster {
           if (res.headersSent) {
             res.responseTime = Date.now() - initTime
             logRequest(req, res)
+            return
           }
-          return
         }
       }
 
