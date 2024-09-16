@@ -126,6 +126,10 @@ export function serveStatic (options) {
  * @param {fs.Stats} stats
  */
   async function serverFileFromStats (req, res, file, stats) {
+    if (req.socket.closed) {
+      return
+    }
+
     return new Promise((resolve, reject) => {
       const fsStream = fs.createReadStream(file)
       const maxAge = options.maxAge ?? 3600
