@@ -35,4 +35,5 @@ app.listen(3210)
 - [x] Error handling.
 - [x] Routing implementation.
 - [x] Scoped Middleware implementation.
+- [x] Redirections in res API.
 - [ ] Universal Middleware implementation.

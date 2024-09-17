@@ -43,3 +43,15 @@ export function addStatusFeature (res) {
     return res
   }
 }
+
+/**
+ * @param {FasterResponse} res
+ * @return {void}
+ */
+export function addRedirectFeature (res) {
+  res.redirect = (url, isPermanent = false) => {
+    res.setHeader('Location', url)
+    res.status(isPermanent ? 301 : 302)
+    return res.end()
+  }
+}
