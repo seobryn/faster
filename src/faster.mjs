@@ -85,7 +85,6 @@ export class Faster {
 
     try {
       const requests = this.#requestMap.get(method)
-      let timeoutRef = null
 
       for (const { path, fnCallbacks } of requests) {
         if (pathIsEqual(url, path)) {
@@ -95,20 +94,16 @@ export class Faster {
 
           for (const fnCallback of fnCallbacks) {
             await fnCallback(req, res)
-          }
-
-          if (res.headersSent) {
-            res.responseTime = Date.now() - initTime
-            logRequest(req, res)
-            clearTimeout(timeoutRef)
-            return
+            if (res.headersSent) {
+              res.responseTime = Date.now() - initTime
+              logRequest(req, res)
+              return
+            }
           }
         }
       }
 
-      timeoutRef = setTimeout(() => {
-        res.status(408).send('Request Timeout')
-      }, this.options.timeout)
+      throw new HttpError(404, 'Not Found')
     } catch (err) {
       if (err instanceof HttpError) {
         if (this.options.log.errorAsJson) {

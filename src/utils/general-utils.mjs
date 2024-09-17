@@ -113,7 +113,7 @@ export function serveStatic (options) {
       if (err instanceof HttpError) {
         throw err
       } else {
-        throw new HttpError(404, 'Not Found')
+        throw new HttpError(404, `Resource Not Found '${reqPathBasename}'`)
       }
     }
   }
