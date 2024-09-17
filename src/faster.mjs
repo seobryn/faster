@@ -1,7 +1,7 @@
 import http from 'http'
 import https from 'https'
 import { getParamsFromUrl, isFunctionAsync, pathIsEqual } from './utils/general-utils.mjs'
-import { addJsonFeature, addSendFeature, addStatusFeature } from './helpers/responseHelpers.mjs'
+import { addJsonFeature, addRedirectFeature, addSendFeature, addStatusFeature } from './helpers/responseHelpers.mjs'
 import { logRequest } from './helpers/logHelpers.mjs'
 import { addParseBodyFeature, requestMatcher } from './helpers/requestHelpers.mjs'
 import { HttpError } from '../index.mjs'
@@ -76,6 +76,7 @@ export class Faster {
     addJsonFeature(res)
     addSendFeature(res)
     addStatusFeature(res)
+    addRedirectFeature(res)
 
     if (this.options.parseBody) {
       await addParseBodyFeature(req)
