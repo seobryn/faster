@@ -26,6 +26,10 @@ app.get('/', (req, res) => {
 app.listen(3210)
 ```
 
+### Additional Features
+If you want to add more, feel free to create a Plugin and send me a PR with the repo link.
+
+1. Swagger UI for Documentation: [@seobryn/swagger-ui-faster](https://github.com/seobryn/swagger-ui-faster)
 
 ### Road map
 - [x] Basic Server creation.
