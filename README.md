@@ -36,4 +36,5 @@ app.listen(3210)
 - [x] Routing implementation.
 - [x] Scoped Middleware implementation.
 - [x] Redirections in res API.
+- [x] Event listeners for server events.
 - [ ] Universal Middleware implementation.

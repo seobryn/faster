@@ -288,4 +288,22 @@ export class Faster {
     this.#handleReqMethod('TRACE', path, fnCallbacks)
     return this
   }
+
+  /**
+   *
+   * @param {"close" | "error" | "listening"} event
+   * @param {Function} listener
+   */
+  on (event, listener) {
+    this.#server.on(event, listener)
+  }
+
+  /**
+   *
+   * @param {string | symbol} event
+   * @param {Function} listener
+   */
+  off (event, listener) {
+    this.#server.off(event, listener)
+  }
 }
