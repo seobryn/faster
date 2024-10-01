@@ -1,7 +1,7 @@
 {
   "name": "@seobryn/faster",
   "displayName": "Faster Web Framework",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Super fast Web framework for Node.js to create api and microservices",
   "main": "index.mjs",
   "type": "module",
