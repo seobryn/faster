@@ -41,4 +41,4 @@ If you want to add more, feel free to create a Plugin and send me a PR with the 
 - [x] Scoped Middleware implementation.
 - [x] Redirections in res API.
 - [x] Event listeners for server events.
-- [ ] Universal Middleware implementation.
+- [x] Universal Middleware implementation.

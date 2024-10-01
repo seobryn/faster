@@ -1,12 +1,14 @@
 {
   "name": "@seobryn/faster",
-  "version": "1.0.9",
+  "displayName": "Faster Web Framework",
+  "version": "1.1.0",
   "description": "Super fast Web framework for Node.js to create api and microservices",
   "main": "index.mjs",
   "type": "module",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "dev": "NODE_NO_WARNINGS=1 nodemon --quiet ./examples/server.mjs"
+    "dev": "NODE_NO_WARNINGS=1 nodemon --quiet ./examples/server.mjs",
+    "commit": "node scripts/commit.mjs"
   },
   "keywords": [
     "faster",

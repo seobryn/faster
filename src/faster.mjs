@@ -63,6 +63,11 @@ export class Faster {
   #requestMap = new Map()
 
   /**
+   * @type {FnCallback[]}
+   */
+  #fnCallbacks = []
+
+  /**
    *
    * @param {FasterRequest} req
    * @param {FasterResponse} res
@@ -86,6 +91,17 @@ export class Faster {
 
     try {
       const requests = this.#requestMap.get(method)
+
+      if (this.#fnCallbacks.length > 0) {
+        for (const fnCallback of this.#fnCallbacks) {
+          await fnCallback(req, res)
+          if (res.headersSent) {
+            res.responseTime = Date.now() - initTime
+            logRequest(req, res)
+            return
+          }
+        }
+      }
 
       for (const { path, fnCallbacks } of requests) {
         if (pathIsEqual(url, path)) {
@@ -305,5 +321,17 @@ export class Faster {
    */
   off (event, listener) {
     this.#server.off(event, listener)
+  }
+
+  /**
+   * This method allows you to add custom global middleware to the server
+   *
+   * `NOTE`: All of this middlewares are executed before routed requests.
+   * @param {...FnCallback} fnCallbacks
+   * @returns {typeof this}
+   */
+  use (...fnCallbacks) {
+    this.#fnCallbacks = [...this.#fnCallbacks, ...fnCallbacks]
+    return this
   }
 }
