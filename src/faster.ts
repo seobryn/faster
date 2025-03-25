@@ -48,8 +48,16 @@ export class Faster {
    * @param {FasterResponse} res
    * @api private
    */
-  private async handleRequest(req: FasterRequest, res: FasterResponse) {
-    const initTime = Date.now()
+  // Add security headers middleware
+  private addSecurityHeaders(res: FasterResponse) {
+    res.setHeader("X-Content-Type-Options", "nosniff")
+    res.setHeader("X-Frame-Options", "DENY")
+    res.setHeader("X-XSS-Protection", "1; mode=block")
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+  }
+
+  // Enhance handleRequest with timeout and security headers
+  private async processRequest(req: FasterRequest, res: FasterResponse) {
     const { method, url } = req
 
     // Special Faster Features
@@ -64,42 +72,50 @@ export class Faster {
 
     res.setHeader("X-Powered-By", "Faster Web Framework")
 
-    try {
-      if (!method) {
-        throw new HttpError(400, "Bad Request")
+    if (!method) {
+      throw new HttpError(400, "Bad Request")
+    }
+
+    const requests = this.requestMap.get(method) ?? []
+
+    if (this.fnCallbacks.length > 0) {
+      for (const fnCallback of this.fnCallbacks) {
+        await fnCallback(req, res)
+        if (res.headersSent) return
       }
+    }
 
-      const requests = this.requestMap.get(method) ?? []
+    for (const { path, fnCallbacks } of requests) {
+      if (pathIsEqual(url ?? "", path)) {
+        const { params, searchParams } = getParamsFromUrl(url ?? "", path)
+        req.params = params
+        req.searchParams = new URLSearchParams(searchParams)
 
-      if (this.fnCallbacks.length > 0) {
-        for (const fnCallback of this.fnCallbacks) {
+        for (const fnCallback of fnCallbacks) {
           await fnCallback(req, res)
-          if (res.headersSent) {
-            res.responseTime = Date.now() - initTime
-            logRequest(req, res)
-            return
-          }
+          if (res.headersSent) return
         }
       }
+    }
 
-      for (const { path, fnCallbacks } of requests) {
-        if (pathIsEqual(url ?? "", path)) {
-          const { params, searchParams } = getParamsFromUrl(url ?? "", path)
-          req.params = params
-          req.searchParams = new URLSearchParams(searchParams)
+    throw new HttpError(404, "Not Found")
+  }
 
-          for (const fnCallback of fnCallbacks) {
-            await fnCallback(req, res)
-            if (res.headersSent) {
-              res.responseTime = Date.now() - initTime
-              logRequest(req, res)
-              return
-            }
-          }
-        }
-      }
+  private async handleRequest(req: FasterRequest, res: FasterResponse) {
+    const initTime = Date.now()
 
-      throw new HttpError(404, "Not Found")
+    // Add security headers
+    this.addSecurityHeaders(res)
+
+    // Add timeout handling
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new HttpError(408, "Request Timeout")), this.options.timeout)
+    })
+
+    try {
+      await Promise.race([this.processRequest(req, res), timeoutPromise])
+      res.responseTime = Date.now() - initTime
+      logRequest(req, res)
     } catch (err) {
       if (err instanceof HttpError) {
         if (this.options.log?.errorAsJson) {
